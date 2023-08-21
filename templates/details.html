@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="icon" type="image/png" href="/static/ico/weather.png" />
+
+  <title>Weatherly</title>
+
+  <link rel="stylesheet" href="/static/style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous" />
+</head>
+
+<body id="body">
+  <header class="regform" style="
+        margin-left: 100px;
+        margin-top: 5px !important;
+        padding: 1px !important;
+      ">
+    <p>Weatherly - Weather Forecasting App</p>
+  </header>
+  <div class="menu-column">
+    <!-- Menu buttons -->
+    <a href="{{url_for('home')}}" class="menu-button" style="padding-top: 70px; padding-bottom: 60px"><img
+        src="/static/ico/home.png" height="40px" width="40px" alt="Home" /></a>
+    <a href="{{url_for('details', city=city)}}" class="menu-button" style="padding-bottom: 50px"><img src="/static/ico/weather2.png" height="40px"
+        width="40px" alt="Weather" /></a>
+    <a href="{{url_for('get_city')}}" class="menu-button" style="padding-bottom: 50px"><img src="/static/ico/cities.png"
+        height="40px" width="40px" alt="Cities" /></a>
+        <a href="#" class="menu-button" style="padding-bottom: 10px" id="prediction"><img src="/static/ico/prediction.png"
+          height="40px" width="40px" alt="Prediction" /></a>
+          <form action="{{ url_for('predict') }}" method="POST" style="margin-top: 10px; position: absolute; left: 80px; padding: 15px; border-radius: 20px; background-color: rgba(0, 0, 0, 0.8); box-shadow: 0 2px 4px rgba(0,0,0, 0.2); align-content: center; display:inline-flexbox; z-index: 1;" id="pred_form" hidden>
+          <div style="padding: 0px 20px 0px 20px;">
+              <select name="city" id="city" style="padding: 0px 20px 0px 20px;" required>
+              <option value="">Select a city</option>
+              <option value="Bengaluru">Bengaluru</option>
+              <option value="Bombay">Bombay</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Hyderabad">Hyderabad</option>
+              <option value="Jaipur">Jaipur</option>
+              <option value="Kanpur">Kanpur</option>
+              <option value="Nagpur">Nagpur</option>
+              <option value="Pune">Pune</option>
+              </select>
+          </div>
+          <div style="margin-left: 60px; margin-top: 5px;">
+              <button class="add_button" style="padding: 2px" type="submit">Predict</button>
+          </div>
+      </form>
+  </div>
+
+  <div class="current_temp" style="
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: auto;
+        margin-left: 110px;
+        margin-bottom: 0px;
+      ">
+    <div class="current_temp-searchbar" style="flex: 1; margin-left: 10px;">
+      <form action="{{ url_for ('forecast') }}" method="POST">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+          <path
+            d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z">
+          </path>
+        </svg>
+        <input name="city" id="search" type="text" value="{{city}}" placeholder="Enter Location" style="width: auto" />
+        <button class="current_temp-searchbar btn-search" type="button" style="
+              border-radius: 0px 5px 5px 0px;
+              margin-left: 0px !important;
+              margin-top: 10px !important;
+              border-radius: 0px 20px 20px 0px !important;
+            ">
+          SEARCH
+        </button>
+      </form>
+    </div>
+    <div class="time" style="flex: 1">
+      <p style="
+            text-align: right;
+            width: auto;
+            margin-right: 20px;
+            margin-bottom: 1px;
+            font-size: 20px;
+          ">
+        {{curr_weather[3]}}
+      </p>
+    </div>
+  </div>
+  <div class="current_temp" style="
+        margin-left: 100px;
+        margin-bottom: 0px;
+        display: flex;
+        flex-direction: row;
+      ">
+    <div class="current_temp" style="
+          margin-left: 10px !important;
+          width: 72% !important;
+          margin-bottom: 0px;
+          display: flex;
+          flex-direction: column;
+        ">
+      <div class="card" style="
+            flex: 1;
+            width: auto !important;
+            margin-right: 10px;
+            margin-left: 10px;
+            padding: 5px;
+            margin-bottom: 5px;
+            background-color: rgba(255, 255, 255, 0.2);
+          ">
+        <h2 style="width: fit-content; font-size: 36px; margin-left: 20px;">
+          {{ curr_weather[0] }}
+        </h2>
+        <p style="width: fit-content; font-size: 20px; margin-left: 20px;">
+          {{curr_weather[1]}}, {{ curr_weather[2] }}
+        </p>
+        <div style="display: flex; flex-direction: row; width: 40%; margin-left:20px;">
+          <div style="
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                width: auto;
+              ">
+            <h3 style="
+                  flex: 1;
+                  width: fit-content;
+                  font-size: 40px;
+                  margin-top: 20px;
+                ">
+              <strong> {{curr_weather[4]}} &deg;C</strong>
+            </h3>
+            <p style="flex: 1; width: fit-content; font-size: 20px">
+              {{curr_weather[5]}}
+            </p>
+          </div>
+          <img width="130" height="130" src="{{curr_weather[6]}}" />
+        </div>
+      </div>
+      <div style="
+            display: flex;
+            flex-direction: column;
+            margin-top: 5px;
+            height: fit-content;
+          ">
+        <div style="flex: 1; display: flex; flex-direction: row">
+          <div class="details_card">
+            <h>
+              <img id="real_feel" src="/static/ico/ico_day/celsius.png" />
+              Real Feel
+            </h>
+            <p><strong>{{curr_weather[9]}}</strong> &deg;C</p>
+          </div>
+          <div class="details_card">
+            <h>
+              <img id="max_temp" src="/static/ico/ico_day/high-temperature.png" />
+              Max Temp
+            </h>
+            <p><strong>{{curr_weather[7]}}</strong> &deg;C</p>
+          </div>
+          <div class="details_card">
+            <h>
+              <img id="min_temp" src="/static/ico/ico_day/low-temperature.png" />
+              Min Temp
+            </h>
+            <p><strong>{{curr_weather[8]}}</strong> &deg;C</p>
+          </div>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: row">
+          <div class="details_card">
+            <h>
+              <img id="wind" src="/static/ico/ico_day/wind.png" />
+              Wind
+            </h>
+            <p>
+              <strong>{{curr_weather[17]}}</strong>Km/h
+              <strong>{{curr_weather[18]}}</strong>&deg; {{curr_weather[19]}}
+            </p>
+          </div>
+          <div class="details_card">
+            <h>
+              <img id="pressure" src="/static/ico/ico_day/pressure.png" />
+              Pressure
+            </h>
+            <p><strong>{{curr_weather[10]}}</strong> hPa</p>
+          </div>
+          <div class="details_card">
+            <h>
+              <img id="cloudcover" src="/static/ico/ico_day/cloudcover.png" />
+              Cloud Cover
+            </h>
+            <p><strong>{{curr_weather[13]}}</strong></p>
+          </div>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: row">
+          <div class="details_card">
+            <h>
+              <img id="dew" src="/static/ico/ico_day/dew.png" />
+              Dew Point
+            </h>
+            <p><strong> {{curr_weather[15]}}</strong> &deg;C</p>
+          </div>
+          <div class="details_card">
+            <h>
+              <img id="preci" src="/static/ico/ico_day/precipitation.png" />
+              Precipitation
+            </h>
+            <p><strong> {{curr_weather[12]}}</strong> mm</p>
+          </div>
+          <div class="details_card">
+            <h>
+              <img id="humidity" src="/static/ico/ico_day/humidity.png" />
+              Humidity
+            </h>
+            <p><strong> {{curr_weather[11]}}</strong> &percnt;</p>
+          </div>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: row">
+          <div class="details_card">
+            <h>
+              <img id="vis" src="/static/ico/ico_day/visibility.png" />
+              Visibility
+            </h>
+            <p><strong> {{curr_weather[16]}}</strong> Km</p>
+          </div>
+          <div class="details_card">
+            <h>
+              <img id="sunrise" src="/static/ico/ico_day/sunrise.png" />
+              Sunrise
+            </h>
+            <p><strong> {{curr_weather[23]}}</strong></p>
+          </div>
+          <div class="details_card">
+            <h>
+              <img id="sunset" src="/static/ico/ico_day/sunset.png" />
+              Sunset
+            </h>
+            <p><strong> {{curr_weather[24]}}</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          width: 28% !important;
+          margin-top: 5px;
+        ">
+      <div class="daily_forecast" style="
+            background: rgba(255, 255, 255, 0.2);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-self: center;
+            font-size: 16px !important;
+            width: 100% !important;
+            border-radius: 20px;
+          ">
+        <div style="width: 100%">
+          <div>
+            <p style="
+                  font-size: 20px;
+                  text-align: left !important;
+                  margin-left: 12px;
+                  margin-bottom: 5px;
+                  margin-right: 10px;
+                ">
+              Three Day Forecast
+            </p>
+          </div>
+          <div style="
+                height: 1px;
+                max-width: 200dvh;
+                opacity: 1;
+                background-color: rgb(50, 60, 100);
+                border-radius: 20px;
+              "></div>
+          <div class="daily_forecast" style="
+                display: flex;
+                flex-direction: column;
+                align-self: auto;
+                margin-left: 10px;
+                margin-bottom: 0px;
+                width: auto;
+              ">
+            <table class="forecast_table" style="flex: 1; width: 100%">
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Weather</th>
+                  <th>Min/Max Temp.</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for data in threeday_forecast %}
+                <tr>
+                  <td id="day{{index}}"></td>
+                  <td>
+                    <div style="display: flex; align-items: center">
+                      <div style="
+                            width: 50%;
+                            text-align: right;
+                            margin-right: 10px;
+                          ">
+                        <img height="50px" width="50px" src="{{data['cond_icon']}}" alt="Weather" />
+                      </div>
+                      <div style="
+                            width: 50%;
+                            text-align: left;
+                            margin-left: 10px;
+                          ">
+                        {{data['cond_text']}}
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    {{data['mintemp_c']}} &deg;C/ {{data['maxtemp_c']}}&deg;C
+                  </td>
+                </tr>
+
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="daily_forecast" style="
+            background: rgba(255, 255, 255, 0.2);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-self: center;
+            font-size: 16px !important;
+            width: 100% !important;
+            border-radius: 20px;
+          ">
+        <div style="width: 100%">
+          <div>
+            <p style="
+                  flex: 1;
+                  font-size: 20px;
+                  text-align: left;
+                  margin-left: 12px;
+                  margin-bottom: 5px;
+                  margin-right: 10px;
+                ">
+              Hourly Forecast
+            </p>
+          </div>
+          <div style="
+                height: 1px;
+                max-width: 200dvh;
+                opacity: 1;
+                background-color: rgb(50, 60, 100);
+                border-radius: 20px;
+              "></div>
+          <div class="daily_forecast" style="
+                display: flex;
+                align-items: flex-start;
+                flex-direction: column;
+                margin: 5px;
+                width: auto !important;
+                border-radius: 0px 0px 20px 20px;
+                overflow: auto;
+              ">
+            <div class="scroll-container" style="height: 46vh; overflow: hidden">
+              <div>
+                {% for data in hourly_forecast %}
+                <div class="row text-center" style="
+                      flex: 1;
+                      display: flex;
+                      flex-direction: row;
+                      margin: 0px;
+                      padding-top: 2px;
+                      padding-bottom: 2px;
+                      width: 100%;
+                    ">
+                  <div class="details col" style="padding: 5px; width: 200px !important">
+                    <p>{{data['hour']}}</p>
+                  </div>
+                  <div class="details col" style="padding: 5px; width: 200px !important">
+                    <img width="60" height="60" src="{{ data['icon'] }}" alt="Weather Icon" />
+                  </div>
+                  <div class="details col" style="padding: 5px; width: 200px !important">
+                    <p>{{data['temp_c']}} &deg;C</p>
+                  </div>
+                </div>
+                <div style="
+                      height: 1px;
+                      max-width: 350px;
+                      background-color: black;
+                      opacity: 1;
+                      border-radius: 20px;
+                      margin-left: 60px;
+                    "></div>
+                {% endfor %}
+              </div>
+            </div>
+            <button class="scroll-button up-button" style="left: 87%; top: 490px" onmouseover="startScroll(-1)"
+              onmouseout="stopScroll()">
+              &#11165;
+            </button>
+            <button class="scroll-button down-button" style="left: 87%; bottom: 20px" onmouseover="startScroll(1)"
+              onmouseout="stopScroll()">
+              &#11167;
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+
+  <script src="/static/_details_script.js">
+  </script>
+</body>
+
+</html>

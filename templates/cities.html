@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="icon" type="image/png" href="/static/ico/weather.png" />
+
+    <title>Weatherly</title>
+
+    <link rel="stylesheet" href="/static/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body id="body">
+    <header
+      class="regform"
+      style="
+        margin-left: 100px;
+        margin-top: 5px !important;
+        padding: 1px !important;
+      "
+    >
+      <p>Weatherly - Weather Forecasting App</p>
+    </header>
+    <div class="menu-column">
+      <!-- Menu buttons -->
+      <a
+        href="{{url_for('home')}}"
+        class="menu-button"
+        style="padding-top: 70px; padding-bottom: 60px"
+      >
+        <img src="/static/ico/home.png" height="40px" width="40px" alt="Home" />
+      </a>
+      <a
+        href="{{url_for('details', city=city)}}"
+        class="menu-button"
+        style="padding-bottom: 50px"
+      >
+        <img
+          src="/static/ico/weather2.png"
+          height="40px"
+          width="40px"
+          alt="Weather"
+        />
+      </a>
+      <a
+        href="{{url_for('get_city')}}"
+        class="menu-button"
+        style="padding-bottom: 50px"
+      >
+        <img
+          src="/static/ico/cities.png"
+          height="40px"
+          width="40px"
+          alt="Cities"
+        />
+      </a>
+      <a href="#" class="menu-button" style="padding-bottom: 10px" id="prediction"><img src="/static/ico/prediction.png"
+        height="40px" width="40px" alt="Prediction" /></a>
+        <form action="{{ url_for('predict') }}" method="POST" style="margin-top: 10px; position: absolute; left: 80px; padding: 15px; border-radius: 20px; background-color: rgba(0, 0, 0, 0.8); box-shadow: 0 2px 4px rgba(0,0,0, 0.2); align-content: center; display:inline-flexbox; z-index: 1;" id="pred_form" hidden>
+        <div style="padding: 0px 20px 0px 20px;">
+            <select name="city" id="city" style="padding: 0px 20px 0px 20px;" required>
+            <option value="">Select a city</option>
+            <option value="Bengaluru">Bengaluru</option>
+            <option value="Bombay">Bombay</option>
+            <option value="Delhi">Delhi</option>
+            <option value="Hyderabad">Hyderabad</option>
+            <option value="Jaipur">Jaipur</option>
+            <option value="Kanpur">Kanpur</option>
+            <option value="Nagpur">Nagpur</option>
+            <option value="Pune">Pune</option>
+            </select>
+        </div>
+        <div style="margin-left: 60px; margin-top: 5px;">
+            <button class="add_button" style="padding: 2px" type="submit">Predict</button>
+        </div>
+    </form>
+    </div>
+    <div
+      class="current_temp"
+      style="
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: auto;
+        margin-left: 100px;
+        margin-bottom: 0px;
+      "
+    >
+      <div class="current_temp-searchbar" style="flex: 1">
+        <form action="{{ url_for ('forecast') }}" method="POST">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+            ></path>
+          </svg>
+          <input
+            name="city"
+            id="search"
+            type="text"
+            placeholder="Enter Location"
+            value="{{city}}"
+            style="width: auto"
+          />
+          <button
+            class="current_temp-searchbar btn-search"
+            type="button"
+            style="margin-top: 10px"
+          >
+            SEARCH
+          </button>
+        </form>
+      </div>
+      <div class="time" style="flex: 1">
+        <p
+          style="
+            text-align: right;
+            width: auto;
+            margin-right: 20px;
+            margin-bottom: 1px;
+            font-size: 20px;
+          "
+        >
+          {{city_curr_weather[0][3]}}
+        </p>
+      </div>
+    </div>
+    {% set current_weather=None %}
+    <div
+      class="current_temp"
+      style="
+        margin-left: 100px;
+        margin-bottom: 0px;
+        display: flex;
+        flex-direction: row;
+      "
+    >
+      <div class="card-container" style="width: 100%">
+        <div class="cards">
+          {% for weather in city_curr_weather %} {% set current_weather=weather
+          %}
+          <div
+            class="current_temp card"
+            style="
+              margin: 0px;
+              background-color: rgba(255, 255, 255, 0.2);
+              flex: 1;
+              width: auto;
+            "
+          >
+            <div
+              style="flex: 1; display: flex; flex-direction: row; width: auto"
+            >
+              <div style="flex: 1; width: 20%">
+                <img width="130" height="130" src="{{weather[21]}}" />
+              </div>
+              <div
+                style="
+                  display: flex;
+                  flex-direction: row;
+                  width: 80%;
+                  text-align: left;
+                "
+              >
+                <div style="flex: 1; display: flex; flex-direction: column">
+                  <h2 style="font-size: 36px; margin: 0px">{{ weather[0] }}</h2>
+                  <p style="font-size: 18px; margin-bottom: 5px">
+                    {{weather[1]}}, {{ weather[2] }}
+                  </p>
+                  <p style="font-size: 20px; margin: 0px">{{weather[20]}}</p>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column">
+                  <h3
+                    style="
+                      flex: 1;
+                      text-align: center;
+                      font-size: 40px;
+                      margin: 20px;
+                    "
+                  >
+                    <strong> {{weather[4]}}&deg;C</strong>
+                  </h3>
+                  <p
+                    style="
+                      flex: 1;
+                      text-align: center;
+                      font-size: 20px;
+                      margin-bottom: 10px;
+                    "
+                  >
+                    Hi: {{weather[7]}}/ Lo: {{weather[8]}}
+                  </p>
+                </div>
+              </div>
+              <div style="flex: 1; text-align: right; width: fit-content">
+                <button onclick="removeCity('{{ current_weather[0] }}')" style="background: none; border: none; font-size: 20px;">
+                  X
+                </button>
+              </div>
+            </div>
+            <button style="background: none; border: 0; width: fit-content; align-self: flex-end;">
+              <p><a  href="{{url_for('details', city=weather[0])}}" style="
+                display: inline-block;
+                padding: 0px 4px 0px 4px;
+                background-color: rgb(0, 61, 105);
+                color: white;
+                text-decoration: none;
+                border-radius: 20px;
+                border: none;
+                cursor: pointer;"> See More</a><p>
+            </button>
+          </div>
+          {% endfor %}
+        </div>
+        <button
+          class="scroll-button up-button"
+          onmouseover="startScroll(-1)"
+          onmouseout="stopScroll()"
+        >
+          &#11165;
+        </button>
+        <button
+          class="scroll-button down-button"
+          onmouseover="startScroll(1)"
+          onmouseout="stopScroll()"
+        >
+          &#11167;
+        </button>
+      </div>
+      <div
+        class="add_button"
+        style="
+          position: relative;
+          margin-top: 2px;
+          margin: 10px;
+          align-self: baseline;
+        "
+      >
+        <div id="formContainer" style="display: none">
+          <form id="cityForm" action="/add_city" method="POST">
+            <input
+              type="text"
+              name="city_name"
+              id="cityName"
+              placeholder="Enter Location"
+              required
+            />
+            <button
+              style="
+                border-radius: 0px;
+                margin-top: 5px;
+                background-color: rgb(143, 229, 255);
+                text-align: center;
+              "
+              type="submit"
+            >
+              Add
+            </button>
+          </form>
+        </div>
+        <button id="add_button" class="circle" onclick="showForm()">
+          <img src="/static/add.png" />
+        </button>
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="/static/_city_script.js">
+    </script>
+  </body>
+</html>
