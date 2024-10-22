@@ -19,7 +19,7 @@ def get_current_weather(city):
     
     querystring = {"q":city,"days":"1"}
 
-    header = {"X-RapidAPI-Key": "40804959d5msh2f41e4f7e5221eap1bfcd0jsn840f636b47da","X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"}
+    header = {"X-RapidAPI-Key": "xxxxxxxxxxxx","X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"}
     response = requests.get(url, headers=header, params=querystring)
     
     #Read data from response
@@ -70,7 +70,7 @@ def get_hour_forecast(city):
     
     querystring = {"q":city,"days":"1"}
 
-    header = {"X-RapidAPI-Key": "40804959d5msh2f41e4f7e5221eap1bfcd0jsn840f636b47da","X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"}
+    header = {"X-RapidAPI-Key": "xxxxxxxxxxxxxxxxxxx","X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"}
 
     response = requests.get(url, headers=header, params=querystring)
     
@@ -104,7 +104,7 @@ def get_threeday_forecast(city):
     
     querystring = {"q":city,"days":"3"}
     
-    header = {"X-RapidAPI-Key": "40804959d5msh2f41e4f7e5221eap1bfcd0jsn840f636b47da","X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"}
+    header = {"X-RapidAPI-Key": "xxxxxxxxxxxxxxxxxx","X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"}
     
     response = requests.get(url, headers=header, params=querystring)
     
